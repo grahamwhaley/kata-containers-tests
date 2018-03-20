@@ -24,43 +24,77 @@
 declare -a json_result_array
 declare -a json_array_array
 
+
+# Generate a timestamp in nanoseconds since 1st Jan 1970
+timestamp_ns() {
+	local t
+	local s
+	local n
+	local ns
+
+	t="$(date +%-s:%-N)"
+	s=$(echo $t | awk -F ':' '{print $1}')
+	n=$(echo $t | awk -F ':' '{print $2}')
+	ns=$(( (s * 1000000000) + n ))
+
+	echo $ns
+}
+
 metrics_json_init() {
-	json_test_name=$1
 
 	# Clear out any previous results
 	json_result_array=()
 
-	echo "Starting JSON for [${json_test_name}]"
+	echo "Starting JSON for [${TEST_NAME}]"
 
 	json_filename=${RESULT_DIR}/$(echo ${TEST_NAME} | sed 's/[ \/]/-/g').json
 
 	local json="$(cat << EOF
 	"env" : {
+		"Runtime": "$RUNTIME_PATH",
+		"RuntimeVersion": "$RUNTIME_VERSION",
 		"Hypervisor": "$HYPERVISOR_PATH",
+		"HypervisorVersion": "$HYPERVISOR_VERSION",
 		"Proxy": "$PROXY_PATH",
-		"Shim": "$SHIM_PATH"
+		"ProxyVersion": "$PROXY_VERSION",
+		"Shim": "$SHIM_PATH",
+		"ShimVersion": "$SHIM_VERSION"
 	}
 EOF
 )"
 
 	metrics_json_add_fragment "$json"
+
+	local json="$(cat << EOF
+	"date" : {
+		"ns": $(timestamp_ns),
+		"Date": "$(date "+%Y-%m-%d %T %z")"
+	}
+EOF
+)"
+	metrics_json_add_fragment "$json"
+
 }
 
 metrics_json_save() {
-	echo "Saving JSON results for [${json_test_name}] in [${json_filename}]"
+	echo "Saving JSON results for [${TEST_NAME}] in [${json_filename}]"
+
+	if [ ! -d ${RESULT_DIR} ];then
+		mkdir -p ${RESULT_DIR}
+	fi
 
 	local maxelem=$(( ${#json_result_array[@]} - 1 ))
 	echo "Process ${#json_result_array[@]} elements (max $maxelem)"
 	local json="$(cat << EOF
-	{
-		$(for index in $(seq 0 $maxelem); do
-			if (( index != maxelem )); then
-				echo "${json_result_array[$index]},"
-			else
-				echo "${json_result_array[$index]}"
-			fi
-		done)
-	}
+{
+$(for index in $(seq 0 $maxelem); do
+	if (( index != maxelem )); then
+		echo "${json_result_array[$index]},"
+	else
+		echo "${json_result_array[$index]}"
+	fi
+done)
+}
 EOF
 )"
 
