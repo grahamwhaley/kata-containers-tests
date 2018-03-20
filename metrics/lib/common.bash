@@ -14,9 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCRIPT_PATH=$(dirname $(readlink -f $0))
-RESULT_DIR="${SCRIPT_PATH}/../results"
-LIB_DIR="${SCRIPT_PATH}/../lib"
+THIS_FILE=$(readlink -f ${BASH_SOURCE[0]})
+LIB_DIR=${THIS_FILE%/*}
+RESULT_DIR="${LIB_DIR}/../results"
+
+source ${LIB_DIR}/json.bash
 
 # Set variables to reasonable defaults if unset or empty
 DOCKER_EXE="${DOCKER_EXE:-docker}"
@@ -27,9 +29,9 @@ extract_kata_env(){
 
 	toml="$(kata-runtime kata-env)"
 
-	SHIM_PATH=$(awk '/^\[Shim\]$/ {foundit=1} /^  Path =/ { if (foundit==1) {print $3; foundit=0} } ' <<< "$toml")
-	PROXY_PATH=$(awk '/^\[Proxy\]$/ {foundit=1} /^  Path =/ { if (foundit==1) {print $3; foundit=0} } ' <<< "$toml")
-	HYPERVISOR_PATH=$(awk '/^\[Hypervisor\]$/ {foundit=1} /^  Path =/ { if (foundit==1) {print $3; foundit=0} } ' <<< "$toml")
+	SHIM_PATH=$(awk '/^\[Shim\]$/ {foundit=1} /^  Path =/ { if (foundit==1) {print $3; foundit=0} } ' <<< "$toml" | sed 's/"//g')
+	PROXY_PATH=$(awk '/^\[Proxy\]$/ {foundit=1} /^  Path =/ { if (foundit==1) {print $3; foundit=0} } ' <<< "$toml" | sed 's/"//g')
+	HYPERVISOR_PATH=$(awk '/^\[Hypervisor\]$/ {foundit=1} /^  Path =/ { if (foundit==1) {print $3; foundit=0} } ' <<< "$toml" | sed 's/"//g')
 
 }
 
