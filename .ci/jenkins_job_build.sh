@@ -6,6 +6,7 @@
 #
 
 set -e
+set -x
 
 # Signify to all scripts that they are running in a CI environment
 [ -z "${KATA_DEV_MODE}" ] && export CI=true
