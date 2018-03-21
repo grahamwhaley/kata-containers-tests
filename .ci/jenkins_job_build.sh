@@ -73,7 +73,10 @@ else
 fi
 
 # Run the static analysis tools
-.ci/static-checks.sh
+if [ -z "${METRICS_CI}" ]
+then
+	.ci/static-checks.sh
+fi
 
 # Setup Kata Containers Environment
 #
@@ -94,6 +97,8 @@ then
 fi
 
 # Run integration tests
-.ci/run.sh
-
+if [ -z "${METRICS_CI}" ]
+then
+	.ci/run.sh
+fi
 popd
