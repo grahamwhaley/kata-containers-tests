@@ -72,6 +72,11 @@ else
 	git fetch origin && git checkout master && git reset --hard origin/master
 fi
 
+# Make sure runc is default runtime.
+# This is needed in case a new image creation.
+# See https://github.com/clearcontainers/osbuilder/issues/8
+"${GOPATH}/src/${tests_repo}/cmd/container-manager/manage_ctr_mgr.sh" docker configure -r runc -f
+
 # Setup Kata Containers Environment
 #
 # - If the repo is "tests", this will call the script living in that repo
