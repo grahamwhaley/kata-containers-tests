@@ -81,7 +81,10 @@ fi
 .ci/setup.sh
 
 # Run the static analysis tools
-.ci/static-checks.sh
+if [ -z "${METRICS_CI}" ]
+then
+	.ci/static-checks.sh
+fi
 
 if [ -n "$pr_number" ]
 then
@@ -94,7 +97,10 @@ then
 fi
 
 # Run integration tests
-.ci/run.sh
+if [ -z "${METRICS_CI}" ]
+then
+	.ci/run.sh
+fi
 
 # Code coverage
 bash <(curl -s https://codecov.io/bash)
