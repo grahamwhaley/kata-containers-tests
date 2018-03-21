@@ -9,6 +9,7 @@
 # See https://github.com/kata-containers/packaging/issues/1
 
 set -e
+set -x
 
 cidir=$(dirname "$0")
 source "${cidir}/lib.sh"
@@ -59,6 +60,7 @@ function get_latest_version {
 }
 
 function download_kernel() {
+	echo " download_kernel()"
 	local version="$1"
 	arch=$(arch)
 	[ -n "${version}" ] || die "version not provided"
@@ -76,7 +78,10 @@ function download_kernel() {
         	die "Unsupported architecture: $arch"
 	fi
 
+	# Hack - the binary make install fails if the files already exist, so nuke
+	# them first
 	pushd "${binaries_dir}"
+	echo "  call make install"
 	sudo make install
 	popd
 }
@@ -84,9 +89,17 @@ function download_kernel() {
 cc_kernel_version="$1"
 
 [ -z "${cc_kernel_version}" ] && usage
+
+echo " Nuke already installed kernel items"
+sudo rm -f /usr/share/clear-containers/vmlinux* || true
+sudo rm -f /usr/share/clear-containers/vmlinuz* || true
+sudo rm -f /usr/share/kata-containers/vmlinux* || true
+sudo rm -f /usr/share/kata-containers/vmlinuz* || true
+
 download_kernel "${cc_kernel_version}"
 
 # Make symbolic link to kata-containers
 # FIXME: see https://github.com/kata-containers/packaging/issues/1
+echo " symlink new kernel items"
 sudo ln -sf /usr/share/clear-containers/vmlinux.container /usr/share/kata-containers/
 sudo ln -sf /usr/share/clear-containers/vmlinuz.container /usr/share/kata-containers/
