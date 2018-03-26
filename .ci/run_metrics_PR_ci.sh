@@ -21,6 +21,8 @@
 
 CURRENTDIR=$(dirname "$(readlink -f "$0")")
 source "${CURRENTDIR}/../metrics/lib/common.bash"
+RESULTS_DIR=$(CURRENTDIR)/../metrics/results
+CHECKMETRICS_DIR=$(CURRENTDIR)/../cmd/checkmetrics
 
 # Set up the initial state
 init() {
@@ -38,6 +40,23 @@ run() {
 	popd
 }
 
+# Check the results
+check() {
+	if [ -n "${METRICS_CI}" ]; then
+		# Ensure we have the latest checkemtrics
+		pushd "$CHECKMETRICS_DIR"
+		sudo make install
+		popd
+
+		checkmetrics --basefile /etc/checkmetrics/checkmetrics-$(uname -n)_json.toml --metricsdir ${RESULTS_DIR}
+		cm_result=$?
+		if [ ${cm_result} != 0 ]; then
+			echo "checkmetrics FAILED (${cm_result})"
+			exit ${cm_result}
+		fi
+	fi
+}
+
 init
 run
-
+check
