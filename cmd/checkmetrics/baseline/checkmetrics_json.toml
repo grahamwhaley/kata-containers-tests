@@ -1,0 +1,17 @@
+# This file contains baseline expectations
+# for checked results by checkmetrics tool.
+[[metric]]
+# The name of the metrics test, must match
+# that of the generated CSV file
+name = "boot-times"
+type = "json"
+description = "measure container lifecycle timings"
+# Min and Max values to set a 'range' that
+# the median of the CSV Results data must fall
+# within (inclusive)
+checkvar = ".Results | .[] | .\"to-workload\".Result"
+checktype = "mean"
+minval = 1.3
+maxval = 1.5
+
+# ... repeat this for each metric ...
