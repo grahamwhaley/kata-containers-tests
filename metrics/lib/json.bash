@@ -72,6 +72,15 @@ EOF
 )"
 	metrics_json_add_fragment "$json"
 
+	local json="$(cat << EOF
+	"test" : {
+		"runtime": ${RUNTIME},
+		"testname": "${TEST_NAME}"
+	}
+EOF
+)"
+	metrics_json_add_fragment "$json"
+
 }
 
 metrics_json_save() {
