@@ -98,7 +98,7 @@ EOF
 	# If we have a JSON URL set up, post the results there as well
 	if [[ $JSON_URL ]]; then
 		echo "Posting results to [$JSON_URL]"
-		curl -XPOST -H"Content-Type: application/json" "$JSON_URL" -d "$json_filename"
+		curl -XPOST -H"Content-Type: application/json" "$JSON_URL" -d @"$json_filename"
 	fi
 }
 
