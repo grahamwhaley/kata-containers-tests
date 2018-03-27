@@ -34,6 +34,7 @@ check() {
 	if [ -n "${METRICS_CI}" ]; then
 		# Ensure we have the latest checkemtrics
 		pushd "$CHECKMETRICS_DIR"
+		make
 		sudo make install
 		popd
 
