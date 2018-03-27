@@ -76,7 +76,8 @@ run() {
 
 		# Run the memory footprint test - the main test that
 		# KSM affects.
-		bash density/docker_memory_usage.sh 20 300 auto
+# FIXME
+#		bash density/docker_memory_usage.sh 20 300 auto
 
 		# And now ensure KSM is turned off for the rest of the tests
 		disable_ksm
@@ -87,7 +88,8 @@ run() {
 
 	# Run the density tests - no KSM, so no need to wait for settle
 	# (so set a token 5s wait)
-	bash density/docker_memory_usage.sh 20 5
+# FIXME
+#	bash density/docker_memory_usage.sh 20 5
 
 	popd
 }
