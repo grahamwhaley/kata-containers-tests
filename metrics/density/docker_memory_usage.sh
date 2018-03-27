@@ -283,7 +283,7 @@ save_config(){
 		"containers": $NUM_CONTAINERS,
 		"ksm": $ksm_on,
 		"auto": "$AUTO_MODE",
-		"waittime": $WAIT_TIME
+		"waittime": $WAIT_TIME,
 		"image": "$IMAGE",
 		"command": "$CMD"
 	}
