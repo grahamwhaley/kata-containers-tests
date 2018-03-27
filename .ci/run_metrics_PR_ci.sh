@@ -10,8 +10,8 @@
 
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 source "${SCRIPT_DIR}/../metrics/lib/common.bash"
-RESULTS_DIR=$(SCRIPT_DIR)/../metrics/results
-CHECKMETRICS_DIR=$(SCRIPT_DIR)/../cmd/checkmetrics
+RESULTS_DIR=${SCRIPT_DIR}/../metrics/results
+CHECKMETRICS_DIR=${SCRIPT_DIR}/../cmd/checkmetrics
 
 # Set up the initial state
 init() {
