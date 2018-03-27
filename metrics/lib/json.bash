@@ -45,8 +45,6 @@ metrics_json_init() {
 	# Clear out any previous results
 	json_result_array=()
 
-	echo "Starting JSON for [${TEST_NAME}]"
-
 	json_filename=${RESULT_DIR}/$(echo ${TEST_NAME} | sed 's/[ \/]/-/g').json
 
 	local json="$(cat << EOF
@@ -77,14 +75,11 @@ EOF
 }
 
 metrics_json_save() {
-	echo "Saving JSON results for [${TEST_NAME}] in [${json_filename}]"
-
 	if [ ! -d ${RESULT_DIR} ];then
 		mkdir -p ${RESULT_DIR}
 	fi
 
 	local maxelem=$(( ${#json_result_array[@]} - 1 ))
-	echo "Process ${#json_result_array[@]} elements (max $maxelem)"
 	local json="$(cat << EOF
 {
 $(for index in $(seq 0 $maxelem); do
@@ -105,13 +100,10 @@ metrics_json_add_fragment() {
 	local data=$1
 
 	# Place on end of array
-	echo "  JSON adding [$data]"
 	json_result_array[${#json_result_array[@]}]="$data"
-	echo "  JSON now has ${#json_result_array[@]} elements"
 }
 
 metrics_json_start_array() {
-	echo "Start new json array"
 	json_array_array=()
 }
 
@@ -119,14 +111,11 @@ metrics_json_add_array_element() {
 	local data=$1
 
 	# Place on end of array
-	echo "  JSON adding array element [$data]"
 	json_array_array[${#json_array_array[@]}]="$data"
 }
 
 metrics_json_end_array() {
 	local name=$1
-
-	echo "  JSON save array [$name]"
 
 	local maxelem=$(( ${#json_array_array[@]} - 1 ))
 	local json="$(cat << EOF
@@ -144,6 +133,4 @@ EOF
 
 	# And save that to the top level
 	metrics_json_add_fragment "$json"
-
-	echo "  JSON save array generated [$json]"
 }
