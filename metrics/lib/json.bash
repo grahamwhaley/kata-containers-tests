@@ -40,12 +40,23 @@ timestamp_ns() {
 	echo $ns
 }
 
+# Generate a timestamp in milliseconds since 1st Jan 1970
+timestamp_ms() {
+	echo $(($(date +%s%N)/1000000))
+}
+
 metrics_json_init() {
 
 	# Clear out any previous results
 	json_result_array=()
 
 	json_filename=${RESULT_DIR}/$(echo ${TEST_NAME} | sed 's/[ \/]/-/g').json
+
+	local json="$(cat << EOF
+	"@timestamp" : $(timestamp_ms)
+EOF
+)"
+	metrics_json_add_fragment "$json"
 
 	local json="$(cat << EOF
 	"env" : {
