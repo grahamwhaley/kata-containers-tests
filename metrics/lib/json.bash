@@ -67,7 +67,8 @@ EOF
 		"Proxy": "$PROXY_PATH",
 		"ProxyVersion": "$PROXY_VERSION",
 		"Shim": "$SHIM_PATH",
-		"ShimVersion": "$SHIM_VERSION"
+		"ShimVersion": "$SHIM_VERSION",
+		"machinename": "$(uname -n)"
 	}
 EOF
 )"
@@ -77,7 +78,7 @@ EOF
 	local json="$(cat << EOF
 	"date" : {
 		"ns": $(timestamp_ns),
-		"Date": "$(date "+%Y-%m-%d %T %z")"
+		"Date": "$(date -u +"%Y-%m-%dT%T.%3N")"
 	}
 EOF
 )"
