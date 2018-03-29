@@ -106,9 +106,8 @@ fi
 if [ -z "${METRICS_CI}" ]
 then
 	.ci/run.sh
+	# Code coverage
+	bash <(curl -s https://codecov.io/bash)
 fi
-
-# Code coverage
-bash <(curl -s https://codecov.io/bash)
 
 popd
