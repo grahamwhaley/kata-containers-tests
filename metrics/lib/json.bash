@@ -62,6 +62,7 @@ EOF
 	"env" : {
 		"Runtime": "$RUNTIME_PATH",
 		"RuntimeVersion": "$RUNTIME_VERSION",
+		"RuntimeCommit": "$RUNTIME_COMMIT",
 		"Hypervisor": "$HYPERVISOR_PATH",
 		"HypervisorVersion": "$HYPERVISOR_VERSION",
 		"Proxy": "$PROXY_PATH",
