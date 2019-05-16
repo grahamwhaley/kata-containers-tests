@@ -30,6 +30,8 @@ timestamp_ms() {
 }
 
 # Intialise the json subsystem
+# FIXME - if $1 == "k8s", then we skip some data writes, as we have not
+# worked out how to extract useful info yet..
 metrics_json_init() {
 
 
@@ -82,21 +84,25 @@ EOF
 	metrics_json_add_fragment "$json"
 
 	# Now add a runtime specific environment section if we can
-	local iskata=$(is_a_kata_runtime "$RUNTIME")
-	if [ "$iskata" == "1" ]; then
-		local rpath="$(get_docker_kata_path $RUNTIME)"
-		local json="$(cat << EOF
+	if [ "$1" == "k8s" ]; then
+		# FIXME - add k8s specific data dump here.
+		true
+	else
+		local iskata=$(is_a_kata_runtime "$RUNTIME")
+		if [ "$iskata" == "1" ]; then
+			local rpath="$(get_docker_kata_path $RUNTIME)"
+			local json="$(cat << EOF
 	"kata-env" :
 	$($rpath kata-env --json)
 EOF
 )"
-		metrics_json_add_fragment "$json"
-	else
-		if [ "$RUNTIME" == "runc" ]; then
-			local output=$(docker-runc -v)
-			local runcversion=$(grep version <<< "$output" | sed 's/runc version //')
-			local runccommit=$(grep commit <<< "$output" | sed 's/commit: //')
-			local json="$(cat << EOF
+			metrics_json_add_fragment "$json"
+		else
+			if [ "$RUNTIME" == "runc" ]; then
+				local output=$(docker-runc -v)
+				local runcversion=$(grep version <<< "$output" | sed 's/runc version //')
+				local runccommit=$(grep commit <<< "$output" | sed 's/commit: //')
+				local json="$(cat << EOF
 	"runc-env" :
 	{
 		"Version": {
@@ -106,9 +112,10 @@ EOF
 	}
 EOF
 )"
-			metrics_json_add_fragment "$json"
-		else
-			warning "Unrecognised runtime ${RUNTIME} - no env extracted"
+				metrics_json_add_fragment "$json"
+			else
+				warning "Unrecognised runtime ${RUNTIME} - no env extracted"
+			fi
 		fi
 	fi
 
